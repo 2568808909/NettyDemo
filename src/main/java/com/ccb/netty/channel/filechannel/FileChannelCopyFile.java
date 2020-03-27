@@ -24,5 +24,9 @@ public class FileChannelCopyFile {
             // 不然下次read的时候发现ByteBuffer满了就没有办法读入数据，read一直都是0，就会陷入死循环
             byteBuffer.clear();
         }
+        inputChannel.close();
+        outputChannel.close();
+        inputChannel.close();
+        outputChannel.close();
     }
 }

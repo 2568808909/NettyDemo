@@ -21,5 +21,6 @@ public class OutputFileChannel {
         //将数据通过FileChannel写出到文件
         channel.write(byteBuffer);
         channel.close();
+        outputStream.close();
     }
 }

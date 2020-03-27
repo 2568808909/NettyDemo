@@ -16,5 +16,6 @@ public class InputFileChannel {
         byteBuffer.get(bytes);
         System.out.println(new String(bytes));
         channel.close();
+        inputStream.close();
     }
 }
