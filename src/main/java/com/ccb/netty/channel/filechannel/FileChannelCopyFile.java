@@ -1,4 +1,4 @@
-package com.ccb.netty.channel;
+package com.ccb.netty.channel.filechannel;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

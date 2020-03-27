@@ -1,4 +1,4 @@
-package com.ccb.netty.channel;
+package com.ccb.netty.channel.filechannel;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
