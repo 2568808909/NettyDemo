@@ -11,7 +11,7 @@ public class NIOClient {
         Scanner scanner = new Scanner(System.in);
         SocketChannel socketChannel = SocketChannel.open();
         socketChannel.configureBlocking(false);
-        System.out.println(socketChannel.connect(new InetSocketAddress("localhost", 8888)));
+        System.out.println(socketChannel.connect(new InetSocketAddress("localhost", 9999)));
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         while (!socketChannel.finishConnect());
         System.out.println("连接完成");
