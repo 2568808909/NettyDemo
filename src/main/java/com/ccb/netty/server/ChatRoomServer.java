@@ -58,15 +58,16 @@ public class ChatRoomServer implements Runnable, Closeable {
                         channel.read(buffer);
                         buffer.flip();
                         String msg = new String(buffer.array(), 0, buffer.limit());
-                        msg = "message from " + address + " " + msg;
-                        System.out.println(msg);
                         if ("exit".equals(msg)) {
                             System.out.println(address + "断开连接");
                             key.cancel();
                             channel.close();
+                        } else {
+                            msg = "message from " + address + " " + msg;
+                            System.out.println(msg);
+                            buffer.clear();
+                            send(key, msg);
                         }
-                        buffer.clear();
-                        send(key, msg);
                         //TODO 转发消息给其他客户客户端
                     }
                 }
@@ -90,7 +91,7 @@ public class ChatRoomServer implements Runnable, Closeable {
             SelectableChannel channel = key.channel();
             if (channel instanceof SocketChannel && !key.equals(self)) {
                 SocketChannel socket = (SocketChannel) channel;
-                System.out.println("发送给 "+socket.getRemoteAddress());
+                System.out.println("发送给 " + socket.getRemoteAddress());
                 socket.write(buffer);
                 //如果要用同一个buffer的数据多次发送，每次write完之后都要对position置0
                 buffer.position(0);

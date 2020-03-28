@@ -47,13 +47,16 @@ public class ChatRoomClient implements Closeable, Runnable {
 
     @Override
     public void close() throws IOException {
-        Thread.currentThread().interrupt();
-        selector.wakeup();
+        if (selector.isOpen()) {
+            selector.wakeup();
+        }
     }
 
     private void release() throws IOException {
-        selector.close();
-        socket.close();
+        if (selector.isOpen()) {
+            selector.close();
+            socket.close();
+        }
     }
 
     @Override
