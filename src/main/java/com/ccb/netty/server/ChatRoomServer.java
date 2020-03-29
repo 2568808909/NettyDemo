@@ -28,7 +28,6 @@ public class ChatRoomServer implements Runnable, Closeable {
         this.server.register(selector, SelectionKey.OP_ACCEPT);
     }
 
-
     @Override
     public void run() {
         System.out.println("服务端已开启.....");
@@ -68,7 +67,6 @@ public class ChatRoomServer implements Runnable, Closeable {
                             buffer.clear();
                             send(key, msg);
                         }
-                        //TODO 转发消息给其他客户客户端
                     }
                 }
                 selectionKeys.clear();
