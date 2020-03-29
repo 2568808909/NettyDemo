@@ -1,22 +1,22 @@
-package com.ccb.netty.server;
+package com.ccb.netty.nettychatroom.server;
 
-import com.ccb.netty.server.handler.NettyBossServerHandler;
-import com.ccb.netty.server.handler.NettyServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
 
+public class NettyChatRoomServer {
 
-public class NettyServer {
+    private int port;
 
-    public static void main(String[] args) throws InterruptedException {
+    public NettyChatRoomServer(int port) {
+        this.port = port;
+    }
 
+    public void run() {
         //1.创建两个线程组bossGroup和workerGroup
         //NioEventLoopGroup默认初始化会创建 核数*2个线程,可以通过传参改变
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
@@ -29,29 +29,33 @@ public class NettyServer {
                     .channel(NioServerSocketChannel.class) //使用NioServerSocketChannel作为服务端的通道实现
                     .option(ChannelOption.SO_BACKLOG, 128) //设置队列得到的连接个数
                     .childOption(ChannelOption.SO_KEEPALIVE, true) //保持活动连接状态
-                    .handler(new ChannelInitializer<ServerSocketChannel>() {  //创建一个测试通道对象
-                        @Override
-                        protected void initChannel(ServerSocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new NettyBossServerHandler());
-                        }
-                    })
                     .childHandler(new ChannelInitializer<SocketChannel>() {  //创建一个测试通道对象
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new NettyServerHandler());
+                            ChannelPipeline pipeline = ch.pipeline();
+                            pipeline.addLast("decoder", new StringDecoder())
+                                    .addLast("encoder", new StringEncoder())
+                                    .addLast(new NettyChatRoomServerHandler());
                         }
                     });//给workerGroup的EventLoop对应的管道设置处理器
 
             //绑定一个端口并且同步，生成ChannelFuture对象
             //启动服务器(并绑定端口)
             ChannelFuture channelFuture = bootstrap.bind(7777).sync();
-
+            System.out.println("服务端启动完毕......");
             //对关闭通道进行监听
             channelFuture.channel().closeFuture().sync();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             //优雅的关闭
             bossGroup.shutdownGracefully();
             workGroup.shutdownGracefully();
         }
     }
+
+    public static void main(String[] args) {
+        new NettyChatRoomServer(6666).run();
+    }
+
 }
